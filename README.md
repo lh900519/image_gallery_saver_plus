@@ -1,4 +1,4 @@
-# image_gallery_saver
+# image_gallery_saver_plus
 
 [![Build Status](https://travis-ci.org/hui-z/image_gallery_saver.svg?branch=master)](https://travis-ci.org/hui-z/image_gallery_saver#)
 [![pub package](https://img.shields.io/pub/v/image_gallery_saver.svg)](https://pub.dartlang.org/packages/image_gallery_saver)
@@ -8,10 +8,10 @@ We use the `image_picker` plugin to select images from the Android and iOS image
 
 ## Usage
 
-To use this plugin, add `image_gallery_saver` as a dependency in your pubspec.yaml file. For example:
+To use this plugin, add `image_gallery_saver_plus` as a dependency in your pubspec.yaml file. For example:
 ```yaml
 dependencies:
-  image_gallery_saver: '^2.0.3'
+  image_gallery_saver: '^3.0.0'
 ```
 
 ## iOS
@@ -37,7 +37,7 @@ Saving an image from the internet, quality and name is option
         await (image.toByteData(format: ui.ImageByteFormat.png));
     if (byteData != null) {
       final result =
-          await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
+          await ImageGallerySaverPlus.saveImage(byteData.buffer.asUint8List());
       print(result);
     }
   }
@@ -46,7 +46,7 @@ Saving an image from the internet, quality and name is option
     var response = await Dio().get(
         "https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=a62e824376d98d1069d40a31113eb807/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg",
         options: Options(responseType: ResponseType.bytes));
-    final result = await ImageGallerySaver.saveImage(
+    final result = await ImageGallerySaverPlus.saveImage(
         Uint8List.fromList(response.data),
         quality: 60,
         name: "hello");
@@ -63,7 +63,7 @@ Saving file(ig: video/gif/others) from the internet
         "https://hyjdoc.oss-cn-beijing.aliyuncs.com/hyj-doc-flutter-demo-run.gif";
     await Dio().download(fileUrl, savePath);
     final result =
-        await ImageGallerySaver.saveFile(savePath, isReturnPathOfIOS: true);
+        await ImageGallerySaverPlus.saveFile(savePath, isReturnPathOfIOS: true);
     print(result);
   }
 
@@ -75,7 +75,7 @@ Saving file(ig: video/gif/others) from the internet
     await Dio().download(fileUrl, savePath, onReceiveProgress: (count, total) {
       print((count / total * 100).toStringAsFixed(0) + "%");
     });
-    final result = await ImageGallerySaver.saveFile(savePath);
+    final result = await ImageGallerySaverPlus.saveFile(savePath);
     print(result);
   }
 ```

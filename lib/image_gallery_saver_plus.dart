@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-class ImageGallerySaver {
+class ImageGallerySaverPlus {
   static const MethodChannel _channel =
-      const MethodChannel('image_gallery_saver');
+      const MethodChannel('image_gallery_saver_plus');
 
   /// save image to Gallery
   /// imageBytes can't null

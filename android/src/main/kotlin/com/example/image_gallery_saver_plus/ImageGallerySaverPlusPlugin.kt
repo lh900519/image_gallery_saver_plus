@@ -1,4 +1,4 @@
-package com.example.imagegallerysaver
+package com.example.image_gallery_saver_plus
 
 import androidx.annotation.NonNull
 import android.annotation.TargetApi
@@ -26,13 +26,14 @@ import android.text.TextUtils
 import android.webkit.MimeTypeMap
 import java.io.OutputStream
 
-class ImageGallerySaverPlugin : FlutterPlugin, MethodCallHandler {
-    private lateinit var methodChannel: MethodChannel
+/** ImageGallerySaverPlusPlugin */
+class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
+  private lateinit var methodChannel: MethodChannel
     private var applicationContext: Context? = null
 
     override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         this.applicationContext = binding.applicationContext
-        methodChannel = MethodChannel(binding.binaryMessenger, "image_gallery_saver")
+        methodChannel = MethodChannel(binding.binaryMessenger, "image_gallery_saver_plus")
         methodChannel.setMethodCallHandler(this)
     }
 
