@@ -16,10 +16,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dio:
-  path_provider:  
-  fluttertoast:
-  permission_handler:
+  dio: ^5.6.0
+  path_provider: ^2.1.4  
+  fluttertoast: ^8.2.5
+  permission_handler: ^11.3.1
   image_gallery_saver_plus:
     # When depending on this package from a real application you should use:
     #   image_gallery_saver_plus: ^x.y.z
