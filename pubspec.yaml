@@ -1,11 +1,11 @@
 name: image_gallery_saver_plus
 description: A flutter plugin for save image to gallery, iOS need to add the following keys to your Info.plist file.
-version: 3.0.3
+version: 3.0.4
 homepage: https://github.com/ArmanKT/image_gallery_saver_plus
 repository: https://github.com/ArmanKT/image_gallery_saver_plus
 environment:
-  sdk: '>=2.12.0 <4.0.0'
-  flutter: ">=1.17.0"
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
