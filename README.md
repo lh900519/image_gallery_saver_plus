@@ -1,7 +1,7 @@
 # image_gallery_saver_plus
 
 
-[![pub package](https://img.shields.io/pub/v/image_gallery_saver.svg)](https://pub.dartlang.org/packages/image_gallery_saver_plus)
+[![pub package](https://img.shields.io/pub/v/image_gallery_saver_plus.svg)](https://pub.dartlang.org/packages/image_gallery_saver_plus)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://choosealicense.com/licenses/mit/)
 
 We have developed an updated version of the `image_gallery_saver` plugin that allows users to download and save images and videos directly to their gallery, with enhanced performance, additional features for organizing media, and improved compatibility with various devices.
@@ -17,7 +17,14 @@ dependencies:
 ## iOS
 Your project need create with swift.
 Add the following keys to your Info.plist file, located in <project root>/ios/Runner/Info.plist:
- * NSPhotoLibraryAddUsageDescription - describe why your app needs permission for the photo library. This is called Privacy - Photo Library Additions Usage Description in the visual editor
+  
+ ``` 
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>We need permission to save photos and videos to your library for your convenience.</string>
+
+<key>NSPhotoLibraryUsageDescription</key>
+<string>We need permission to access your photo library to view and select your photos and videos.</string>
+ ```	
  
  ##  Android
  You need to ask for storage permission to save an image to the gallery. You can handle the storage permission using [flutter_permission_handler](https://github.com/BaseflowIT/flutter-permission-handler).

@@ -8,7 +8,7 @@ public class ImageGallerySaverPlusPlugin: NSObject, FlutterPlugin {
 
     public static func register(with registrar: FlutterPluginRegistrar) {
       let channel = FlutterMethodChannel(name: "image_gallery_saver_plus", binaryMessenger: registrar.messenger())
-      let instance = SwiftImageGallerySaverPlugin()
+      let instance = ImageGallerySaverPlusPlugin()
       registrar.addMethodCallDelegate(instance, channel: channel)
     }
 
