@@ -1,3 +1,9 @@
+## 4.0.0-0.alpha
+- 1. Support for the latest Gradle version.
+- 2. Compatibility with the latest Flutter version.
+- 3. Fixed issues related to deprecated Android APIs.
+- 4. Resolved compiling errors due to unused and old Kotlin code.
+- 5. Support for the latest Android Studio Ladybug with Flutter 3.24.5.
 ## 3.0.5
 - 1. Stable Release: Marked as the stable release version.
 - 2. iOS Issue Resolved: Fixed issues affecting the iOS platform.

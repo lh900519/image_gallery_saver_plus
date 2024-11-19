@@ -11,7 +11,7 @@ We have developed an updated version of the `image_gallery_saver` plugin that al
 To use this plugin, add `image_gallery_saver_plus` as a dependency in your pubspec.yaml file. For example:
 ```yaml
 dependencies:
-  image_gallery_saver_plus: '^3.0.5'
+  image_gallery_saver_plus: '^4.0.0'
 ```
 
 ## iOS

@@ -26,12 +26,14 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  GlobalKey _globalKey = GlobalKey();
+  final GlobalKey _globalKey = GlobalKey();
 
   @override
   void initState() {
@@ -55,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   alignment: Alignment.center,
                   width: 300,
                   height: 300,
-                  color: Colors.blue,
+                  color: Colors.red,
                 ),
               ),
               Container(
