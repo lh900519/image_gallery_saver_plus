@@ -213,11 +213,9 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
                 if (outputStream != null) {
                     fileInputStream = FileInputStream(originalFile)
 
-                    val buffer = ByteArray(10240)
-                    var count: Int = 0
-                    while (fileInputStream.read(buffer) > 0) {
-                        count = fileInputStream.read(buffer)  // Read and update count
-                        outputStream.write(buffer, 0, count)
+                    val copied = fileInputStream.copyTo(outputStream)
+                    if (copied < 1) {
+                        throw RuntimeException("No bytes copied. $copied")
                     }
 
                     outputStream.flush()
