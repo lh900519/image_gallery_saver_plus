@@ -1,3 +1,11 @@
+# Changelog
+
+## 4.0.1
+- 1. Support for the latest Gradle version.
+- 2. Compatibility with the latest Flutter version.
+- 3. Fixed issues related to deprecated Android APIs.
+- 4. Resolved compiling errors due to unused and old Kotlin code.
+- 5. Support for the latest Android Studio Ladybug with Flutter 3.29.*.
 ## 4.0.0-0.alpha
 - 1. Support for the latest Gradle version.
 - 2. Compatibility with the latest Flutter version.

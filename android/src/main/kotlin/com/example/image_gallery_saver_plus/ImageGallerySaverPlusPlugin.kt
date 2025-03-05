@@ -138,16 +138,10 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
      * @param fileUri file path
      */
     private fun sendBroadcast(context: Context, fileUri: Uri?) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-            mediaScanIntent.data = fileUri
-            context.sendBroadcast(mediaScanIntent)
-        } else {
-            // For Android 10 and above, use MediaScannerConnection
-            MediaScannerConnection.scanFile(context, arrayOf(fileUri?.path), null, null)
+        fileUri?.path?.let { path ->
+            MediaScannerConnection.scanFile(context, arrayOf(path), null, null)
         }
     }
-
 
     private fun saveImageToGallery(
         bmp: Bitmap?,
@@ -214,12 +208,10 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
                     fileInputStream = FileInputStream(originalFile)
 
                     val buffer = ByteArray(10240)
-                    var count: Int = 0
-                    while (fileInputStream.read(buffer) > 0) {
-                        count = fileInputStream.read(buffer)  // Read and update count
+                    var count: Int
+                    while (fileInputStream.read(buffer).also { count = it } > 0) {
                         outputStream.write(buffer, 0, count)
                     }
-
                     outputStream.flush()
                     success = true
                 }
