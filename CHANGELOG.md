@@ -1,6 +1,6 @@
 # Changelog
 
-## 4.0.1
+## 4.0.0
 - 1. Support for the latest Gradle version.
 - 2. Compatibility with the latest Flutter version.
 - 3. Fixed issues related to deprecated Android APIs.
