@@ -138,16 +138,10 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
      * @param fileUri file path
      */
     private fun sendBroadcast(context: Context, fileUri: Uri?) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-            mediaScanIntent.data = fileUri
-            context.sendBroadcast(mediaScanIntent)
-        } else {
-            // For Android 10 and above, use MediaScannerConnection
-            MediaScannerConnection.scanFile(context, arrayOf(fileUri?.path), null, null)
+        fileUri?.path?.let { path ->
+            MediaScannerConnection.scanFile(context, arrayOf(path), null, null)
         }
     }
-
 
     private fun saveImageToGallery(
         bmp: Bitmap?,
@@ -189,51 +183,49 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
         }
     }
 
+   
     private fun saveFileToGallery(filePath: String?, name: String?): HashMap<String, Any?> {
-        // check parameters
-        if (filePath == null) {
-            return SaveResultModel(false, null, "parameters error").toHashMap()
+    // check parameters
+    if (filePath == null) {
+        return SaveResultModel(false, null, "parameters error").toHashMap()
+    }
+    val context = applicationContext ?: return SaveResultModel(
+        false,
+        null,
+        "applicationContext null"
+    ).toHashMap()
+
+    var fileUri: Uri? = null
+    var success = false
+
+    try {
+        val originalFile = File(filePath)
+        if (!originalFile.exists()) {
+            return SaveResultModel(false, null, "$filePath does not exist").toHashMap()
         }
-        val context = applicationContext ?: return SaveResultModel(
-            false,
-            null,
-            "applicationContext null"
+
+        fileUri = generateUri(originalFile.extension, name) ?: return SaveResultModel(
+            false, null, "Failed to generate URI"
         ).toHashMap()
-        var fileUri: Uri? = null
-        var outputStream: OutputStream? = null
-        var fileInputStream: FileInputStream? = null
-        var success = false
 
-        try {
-            val originalFile = File(filePath)
-            if(!originalFile.exists()) return SaveResultModel(false, null, "$filePath does not exist").toHashMap()
-            fileUri = generateUri(originalFile.extension, name)
-            if (fileUri != null) {
-                outputStream = context.contentResolver?.openOutputStream(fileUri)
-                if (outputStream != null) {
-                    fileInputStream = FileInputStream(originalFile)
-
-                    val copied = fileInputStream.copyTo(outputStream)
-                    if (copied < 1) {
-                        throw RuntimeException("No bytes copied. $copied")
-                    }
-
-                    outputStream.flush()
-                    success = true
+        context.contentResolver.openOutputStream(fileUri)?.use { outputStream ->
+            FileInputStream(originalFile).use { fileInputStream ->
+                val copied = fileInputStream.copyTo(outputStream)
+                if (copied < 1) {
+                    throw IOException("No bytes copied. File might be empty.")
                 }
+                success = true
             }
-        } catch (e: IOException) {
-            SaveResultModel(false, null, e.toString()).toHashMap()
-        } finally {
-            outputStream?.close()
-            fileInputStream?.close()
         }
-        return if (success) {
-            sendBroadcast(context, fileUri)
-            SaveResultModel(fileUri.toString().isNotEmpty(), fileUri.toString(), null).toHashMap()
-        } else {
-            SaveResultModel(false, null, "saveFileToGallery fail").toHashMap()
-        }
+    } catch (e: IOException) {
+        return SaveResultModel(false, null, e.toString()).toHashMap()
+    }
+
+    return if (success) {
+        sendBroadcast(context, fileUri)
+        SaveResultModel(true, fileUri.toString(), null).toHashMap()
+    } else {
+        SaveResultModel(false, null, "saveFileToGallery failed").toHashMap()
     }
 }
 
