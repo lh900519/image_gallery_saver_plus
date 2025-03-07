@@ -4,14 +4,14 @@
 [![pub package](https://img.shields.io/pub/v/image_gallery_saver_plus.svg)](https://pub.dartlang.org/packages/image_gallery_saver_plus)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://choosealicense.com/licenses/mit/)
 
-We have developed an updated version of the `image_gallery_saver` plugin that allows users to download and save images and videos directly to their gallery, with enhanced performance, additional features for organizing media, and improved compatibility with various devices.
+An updated plugin enables users to download and save images and videos directly to their gallery, with enhanced performance, improved media organization features, and better compatibility across various devices.
 
 ## Usage
 
 To use this plugin, add `image_gallery_saver_plus` as a dependency in your pubspec.yaml file. For example:
 ```yaml
 dependencies:
-  image_gallery_saver_plus: '^4.0.0'
+  image_gallery_saver_plus: ^4.0.1
 ```
 
 ## iOS

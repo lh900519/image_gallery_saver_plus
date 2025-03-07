@@ -1,5 +1,6 @@
 # Changelog
-
+## 4.0.1
+- 1. Fix: Avoid Double Read Issue and Use copyTo() for Efficient File Copying
 ## 4.0.0
 - 1. Support for the latest Gradle version.
 - 2. Compatibility with the latest Flutter version.
