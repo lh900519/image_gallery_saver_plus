@@ -183,51 +183,49 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
         }
     }
 
+   
     private fun saveFileToGallery(filePath: String?, name: String?): HashMap<String, Any?> {
-        // check parameters
-        if (filePath == null) {
-            return SaveResultModel(false, null, "parameters error").toHashMap()
+    // check parameters
+    if (filePath == null) {
+        return SaveResultModel(false, null, "parameters error").toHashMap()
+    }
+    val context = applicationContext ?: return SaveResultModel(
+        false,
+        null,
+        "applicationContext null"
+    ).toHashMap()
+
+    var fileUri: Uri? = null
+    var success = false
+
+    try {
+        val originalFile = File(filePath)
+        if (!originalFile.exists()) {
+            return SaveResultModel(false, null, "$filePath does not exist").toHashMap()
         }
-        val context = applicationContext ?: return SaveResultModel(
-            false,
-            null,
-            "applicationContext null"
+
+        fileUri = generateUri(originalFile.extension, name) ?: return SaveResultModel(
+            false, null, "Failed to generate URI"
         ).toHashMap()
-        var fileUri: Uri? = null
-        var outputStream: OutputStream? = null
-        var fileInputStream: FileInputStream? = null
-        var success = false
 
-        try {
-            val originalFile = File(filePath)
-            if(!originalFile.exists()) return SaveResultModel(false, null, "$filePath does not exist").toHashMap()
-            fileUri = generateUri(originalFile.extension, name)
-            if (fileUri != null) {
-                outputStream = context.contentResolver?.openOutputStream(fileUri)
-                if (outputStream != null) {
-                    fileInputStream = FileInputStream(originalFile)
-
-                    val buffer = ByteArray(10240)
-                    var count: Int
-                    while (fileInputStream.read(buffer).also { count = it } > 0) {
-                        outputStream.write(buffer, 0, count)
-                    }
-                    outputStream.flush()
-                    success = true
+        context.contentResolver.openOutputStream(fileUri)?.use { outputStream ->
+            FileInputStream(originalFile).use { fileInputStream ->
+                val copied = fileInputStream.copyTo(outputStream)
+                if (copied < 1) {
+                    throw IOException("No bytes copied. File might be empty.")
                 }
+                success = true
             }
-        } catch (e: IOException) {
-            SaveResultModel(false, null, e.toString()).toHashMap()
-        } finally {
-            outputStream?.close()
-            fileInputStream?.close()
         }
-        return if (success) {
-            sendBroadcast(context, fileUri)
-            SaveResultModel(fileUri.toString().isNotEmpty(), fileUri.toString(), null).toHashMap()
-        } else {
-            SaveResultModel(false, null, "saveFileToGallery fail").toHashMap()
-        }
+    } catch (e: IOException) {
+        return SaveResultModel(false, null, e.toString()).toHashMap()
+    }
+
+    return if (success) {
+        sendBroadcast(context, fileUri)
+        SaveResultModel(true, fileUri.toString(), null).toHashMap()
+    } else {
+        SaveResultModel(false, null, "saveFileToGallery failed").toHashMap()
     }
 }
 
