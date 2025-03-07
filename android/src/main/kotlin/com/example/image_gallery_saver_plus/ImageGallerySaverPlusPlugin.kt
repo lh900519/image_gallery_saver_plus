@@ -26,8 +26,8 @@ import android.webkit.MimeTypeMap
 import java.io.OutputStream
 
 /** ImageGallerySaverPlusPlugin */
-class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
-  private lateinit var methodChannel: MethodChannel
+class ImageGallerySaverPlusPlugin : FlutterPlugin, MethodCallHandler {
+    private lateinit var methodChannel: MethodChannel
     private var applicationContext: Context? = null
 
     override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -36,7 +36,7 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
         methodChannel.setMethodCallHandler(this)
     }
 
-    override fun onMethodCall(@NonNull call: MethodCall,@NonNull result: Result): Unit {
+    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result): Unit {
         when (call.method) {
             "saveImageToGallery" -> {
                 val image = call.argument<ByteArray?>("imageBytes")
@@ -72,7 +72,7 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
     private fun generateUri(extension: String = "", name: String? = null): Uri? {
         var fileName = name ?: System.currentTimeMillis().toString()
         val mimeType = getMIMEType(extension)
-        val isVideo = mimeType?.startsWith("video")==true
+        val isVideo = mimeType?.startsWith("video") == true
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // >= android 10
@@ -90,9 +90,12 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
                     }
                 )
                 if (!TextUtils.isEmpty(mimeType)) {
-                    put(when {isVideo -> MediaStore.Video.Media.MIME_TYPE
-                        else -> MediaStore.Images.Media.MIME_TYPE
-                    }, mimeType)
+                    put(
+                        when {
+                            isVideo -> MediaStore.Video.Media.MIME_TYPE
+                            else -> MediaStore.Images.Media.MIME_TYPE
+                        }, mimeType
+                    )
                 }
             }
 
@@ -101,10 +104,12 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
         } else {
             // < android 10
             val storePath =
-                Environment.getExternalStoragePublicDirectory(when {
-                    isVideo -> Environment.DIRECTORY_MOVIES
-                    else -> Environment.DIRECTORY_PICTURES
-                }).absolutePath
+                Environment.getExternalStoragePublicDirectory(
+                    when {
+                        isVideo -> Environment.DIRECTORY_MOVIES
+                        else -> Environment.DIRECTORY_PICTURES
+                    }
+                ).absolutePath
             val appDir = File(storePath).apply {
                 if (!exists()) {
                     mkdir()
@@ -183,60 +188,64 @@ class ImageGallerySaverPlusPlugin: FlutterPlugin, MethodCallHandler {
         }
     }
 
-   
+
     private fun saveFileToGallery(filePath: String?, name: String?): HashMap<String, Any?> {
-    // check parameters
-    if (filePath == null) {
-        return SaveResultModel(false, null, "parameters error").toHashMap()
-    }
-    val context = applicationContext ?: return SaveResultModel(
-        false,
-        null,
-        "applicationContext null"
-    ).toHashMap()
-
-    var fileUri: Uri? = null
-    var success = false
-
-    try {
-        val originalFile = File(filePath)
-        if (!originalFile.exists()) {
-            return SaveResultModel(false, null, "$filePath does not exist").toHashMap()
+        // check parameters
+        if (filePath == null) {
+            return SaveResultModel(false, null, "parameters error").toHashMap()
         }
-
-        fileUri = generateUri(originalFile.extension, name) ?: return SaveResultModel(
-            false, null, "Failed to generate URI"
+        val context = applicationContext ?: return SaveResultModel(
+            false,
+            null,
+            "applicationContext null"
         ).toHashMap()
 
-        context.contentResolver.openOutputStream(fileUri)?.use { outputStream ->
-            FileInputStream(originalFile).use { fileInputStream ->
-                val copied = fileInputStream.copyTo(outputStream)
-                if (copied < 1) {
-                    throw IOException("No bytes copied. File might be empty.")
-                }
-                success = true
+        var fileUri: Uri? = null
+        var success = false
+
+        try {
+            val originalFile = File(filePath)
+            if (!originalFile.exists()) {
+                return SaveResultModel(false, null, "$filePath does not exist").toHashMap()
             }
+
+            fileUri = generateUri(originalFile.extension, name) ?: return SaveResultModel(
+                false, null, "Failed to generate URI"
+            ).toHashMap()
+
+            context.contentResolver.openOutputStream(fileUri)?.use { outputStream ->
+                FileInputStream(originalFile).use { fileInputStream ->
+                    val copied = fileInputStream.copyTo(outputStream)
+                    if (copied < 1) {
+                        throw IOException("No bytes copied. File might be empty.")
+                    }
+                    success = true
+                }
+            }
+        } catch (e: IOException) {
+            return SaveResultModel(false, null, e.toString()).toHashMap()
         }
-    } catch (e: IOException) {
-        return SaveResultModel(false, null, e.toString()).toHashMap()
+
+        return if (success) {
+            sendBroadcast(context, fileUri)
+            SaveResultModel(true, fileUri.toString(), null).toHashMap()
+        } else {
+            SaveResultModel(false, null, "saveFileToGallery failed").toHashMap()
+        }
     }
 
-    return if (success) {
-        sendBroadcast(context, fileUri)
-        SaveResultModel(true, fileUri.toString(), null).toHashMap()
-    } else {
-        SaveResultModel(false, null, "saveFileToGallery failed").toHashMap()
+    class SaveResultModel(
+        var isSuccess: Boolean,
+        var filePath: String? = null,
+        var errorMessage: String? = null
+    ) {
+        fun toHashMap(): HashMap<String, Any?> {
+            val hashMap = HashMap<String, Any?>()
+            hashMap["isSuccess"] = isSuccess
+            hashMap["filePath"] = filePath
+            hashMap["errorMessage"] = errorMessage
+            return hashMap
+        }
     }
-}
 
-class SaveResultModel(var isSuccess: Boolean,
-                      var filePath: String? = null,
-                      var errorMessage: String? = null) {
-    fun toHashMap(): HashMap<String, Any?> {
-        val hashMap = HashMap<String, Any?>()
-        hashMap["isSuccess"] = isSuccess
-        hashMap["filePath"] = filePath
-        hashMap["errorMessage"] = errorMessage
-        return hashMap
-    }
 }
