@@ -58,6 +58,23 @@ public class ImageGallerySaverPlusPlugin: NSObject, FlutterPlugin {
         }, completionHandler: { [unowned self] (success, error) in
             DispatchQueue.main.async {
                 if (success && videoIds.count > 0) {
+                    // 检查相册权限状态
+                    let status = PHPhotoLibrary.authorizationStatus()
+                  
+                    var hasPermissions = false
+                    if status == .authorized {
+                      hasPermissions = true
+                    } else if #available(iOS 14, *) {
+                      if status == .limited{
+                        hasPermissions = true
+                      }
+                    }
+                  
+                    guard hasPermissions else {
+                      self.saveResult(isSuccess: true, filePath: "")
+                      return
+                    }
+                    
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: videoIds, options: nil)
                     if (assetResult.count > 0) {
                         let videoAsset = assetResult[0]
@@ -92,6 +109,23 @@ public class ImageGallerySaverPlusPlugin: NSObject, FlutterPlugin {
                 if (success && imageIds.count > 0) {
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
                     if (assetResult.count > 0) {
+                        // 检查相册权限状态
+                        let status = PHPhotoLibrary.authorizationStatus()
+                      
+                        var hasPermissions = false
+                        if status == .authorized {
+                          hasPermissions = true
+                        } else if #available(iOS 14, *) {
+                          if status == .limited{
+                            hasPermissions = true
+                          }
+                        }
+                      
+                        guard hasPermissions else {
+                          self.saveResult(isSuccess: true, filePath: "")
+                          return
+                        }
+                      
                         let imageAsset = assetResult[0]
                         let options = PHContentEditingInputRequestOptions()
                         options.canHandleAdjustmentData = { (adjustmeta)
@@ -127,6 +161,23 @@ public class ImageGallerySaverPlusPlugin: NSObject, FlutterPlugin {
         }, completionHandler: { [unowned self] (success, error) in
             DispatchQueue.main.async {
                 if (success && imageIds.count > 0) {
+                    // 检查相册权限状态
+                    let status = PHPhotoLibrary.authorizationStatus()
+                  
+                    var hasPermissions = false
+                    if status == .authorized {
+                      hasPermissions = true
+                    } else if #available(iOS 14, *) {
+                      if status == .limited{
+                        hasPermissions = true
+                      }
+                    }
+                  
+                    guard hasPermissions else {
+                      self.saveResult(isSuccess: true, filePath: "")
+                      return
+                    }
+                  
                     let assetResult = PHAsset.fetchAssets(withLocalIdentifiers: imageIds, options: nil)
                     if (assetResult.count > 0) {
                         let imageAsset = assetResult[0]
